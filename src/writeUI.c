@@ -1,15 +1,28 @@
 #include "writeUI.h"
 #include "curses.h"
+#include "mainMenuUI.h"
+#include "stdio.h"
 #include "utils.h"
 
 static int startX = 0;
 static int startY = 0;
 
 static char *choices[] = {
-    "Yes",
-    "No",
+    "Save",
+    "Retry",
 };
 static int nChoices = sizeof(choices) / sizeof(char *);
+
+void addReviewToFile(const char *oshiName, const char *review) {
+  FILE *file = fopen("reviews.txt", "a");
+  if (!file) {
+    perror("Failed to open file.");
+    return;
+  }
+
+  fprintf(file, "%s|%s\n", oshiName, review); // Use | as delimiter
+  fclose(file);
+}
 
 void printReviewMenuUI(WINDOW *menuWin, int highlight) {
   int x = 2, y = 2;
@@ -30,11 +43,11 @@ void printReviewMenuUI(WINDOW *menuWin, int highlight) {
   wrefresh(menuWin);
 }
 
-void reviewChoices(int reviewChoice) {
+void reviewChoices(int reviewChoice, const char *oshiName, const char *review) {
   switch (reviewChoice) {
   case 1:
-    printw("Returning to Menu...");
-    getch();
+    addReviewToFile(oshiName, review);
+    mainMenu();
     break;
   case 2:
     writeReview();
@@ -72,11 +85,10 @@ void writeReview(void) {
 
   printReviewMenuUI(reviewWin, highlight);
 
-  printw("Is this okay?: ");
   reviewChoice = returnChoice(reviewWin, highlight, reviewChoice, nChoices,
                               printReviewMenuUI);
 
-  reviewChoices(reviewChoice);
+  reviewChoices(reviewChoice, oshiName, oshiReview);
 
   noecho();
   clear();

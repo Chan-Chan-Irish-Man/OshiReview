@@ -1,7 +1,7 @@
 #include "curses.h"
 #include "locale.h"
 
-#include "menuUI.h"
+#include "mainMenuUI.h"
 
 void initCurses(void) {
   initscr();

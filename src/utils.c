@@ -1,10 +1,12 @@
 #include "utils.h"
-#include "menuUI.h"
+#include "mainMenuUI.h"
 #include "writeUI.h"
 
 int returnChoice(WINDOW *window, int highlight, int choice, int nChoices,
                  void (*printFn)(WINDOW *, int)) {
   int c;
+
+  printFn(window, highlight);
 
   while (1) {
     c = wgetch(window);
@@ -21,16 +23,13 @@ int returnChoice(WINDOW *window, int highlight, int choice, int nChoices,
       else
         ++highlight;
       break;
-    case 10:
+    case 10: // Enter key
       choice = highlight;
       return choice;
-      break;
     default:
-      refresh();
       break;
     }
+
     printFn(window, highlight);
   }
-  clrtoeol();
-  refresh();
 }

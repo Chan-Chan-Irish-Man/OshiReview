@@ -1,9 +1,93 @@
-#include "curses.h"
-
 #include "readUI.h"
+#include "curses.h"
+#include "string.h"
+#include "utils.h"
+
+int readReviewsFromFile(Review *reviews, int maxReviews) {
+  FILE *file = fopen("reviews.txt", "r");
+  if (!file) {
+    perror("Failed to open file.");
+    return -1;
+  }
+
+  char line[MAX_LINE_LEN];
+  int count = 0;
+
+  while (fgets(line, sizeof(line), file) && count < maxReviews) {
+    line[strcspn(line, "\n")] = 0;
+
+    char *oshiName = strtok(line, "|");
+    char *review = strtok(NULL, "|");
+
+    if (oshiName && review) {
+      strncpy(reviews[count].oshiName, oshiName, MAX_NAME_LEN - 1);
+      strncpy(reviews[count].review, review, MAX_REVIEW_LEN - 1);
+      count++;
+    }
+  }
+
+  fclose(file);
+  return count;
+}
+
+static Review *sharedReviews = NULL;
+static int sharedReviewCount = 0;
+
+static void printReviewsUI(WINDOW *win, int highlight) {
+  mvwprintw(win, 0, 2,
+            "== REVIEWS (%d total, ↑↓ to scroll, ENTER to select) ==",
+            sharedReviewCount);
+
+  int x = 2, y = 2;
+
+  werase(win);
+  box(win, 0, 0);
+  mvwprintw(win, 0, 2, "== REVIEWS (Press Q to return) ==");
+
+  for (int i = 0; i < sharedReviewCount; ++i) {
+    if (i == highlight - 1)
+      wattron(win, A_REVERSE);
+
+    mvwprintw(win, y, x, "%s: %s", sharedReviews[i].oshiName,
+              sharedReviews[i].review);
+
+    if (i == highlight - 1)
+      wattroff(win, A_REVERSE);
+
+    ++y;
+  }
+
+  wrefresh(win);
+}
 
 void readReviews(void) {
+  static Review reviews[MAX_REVIEWS];
+  sharedReviews = reviews;
+
+  sharedReviewCount = readReviewsFromFile(reviews, MAX_REVIEWS);
+  if (sharedReviewCount <= 0) {
+    clear();
+    mvprintw(0, 0, "No reviews found. Press any key to return.");
+    getch();
+    return;
+  }
+
+  WINDOW *reviewWin;
+  int highlight = 1;
+  int reviewChoice = 0;
+
+  int startX = (80 - WIDTH) / 2;
+  int startY = (24 - HEIGHT) / 2;
+
+  reviewWin = newwin(HEIGHT, WIDTH, startY, startX);
+  keypad(reviewWin, TRUE);
+  refresh();
+
+  reviewChoice = returnChoice(reviewWin, highlight, reviewChoice,
+                              sharedReviewCount, printReviewsUI);
+
+  werase(reviewWin);
+  wrefresh(reviewWin);
+  delwin(reviewWin);
   clear();
-  printw("READ REVIEWS");
-  getch();
 }
