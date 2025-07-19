@@ -27,8 +27,9 @@ void addReviewToFile(const char *oshiName, const char *review) {
 void printReviewMenuUI(WINDOW *menuWin, int highlight) {
   int x = 2, y = 2;
 
-  box(menuWin, 0, 0);
-  mvwprintw(menuWin, 0, 2, "== CONFIRM REVIEW ==");
+  box(menuWin, '|', '=');
+  mvwprintw(menuWin, WRITEBOX_TITLE_Y, WRITEBOX_TITLE_X,
+            "== CONFIRM REVIEW ==");
 
   for (int i = 0; i < nChoices; ++i) {
     if (highlight == i + 1) {
@@ -61,8 +62,8 @@ void reviewChoices(int reviewChoice, const char *oshiName, const char *review) {
 
 void writeReview(void) {
   WINDOW *reviewWin;
-  int highlight = 1;
-  int reviewChoice = 0;
+  int highlight = INIT_HIGHLIGHT;
+  int reviewChoice = INIT_CHOICE;
 
   startX = (80 - WIDTH) / 2;
   startY = (24 - HEIGHT) / 2;

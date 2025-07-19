@@ -9,6 +9,8 @@
 #define WIDTH 60
 #define HEIGHT 20
 #define MAX_LINE_LEN 1024
+#define INIT_HIGHLIGHT 1
+#define INIT_CHOICE 0
 
 typedef struct {
   char oshiName[MAX_NAME_LEN];

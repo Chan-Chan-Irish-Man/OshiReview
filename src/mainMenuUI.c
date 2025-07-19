@@ -37,7 +37,7 @@ void menuChoices(int choice) {
 void printMainMenuUI(WINDOW *menuWin, int highlight) {
   int x = 2, y = 2;
 
-  mvwprintw(menuWin, 0, 2, "== OSHI REVIEW ==");
+  mvwprintw(menuWin, MAINMENU_TITLE_Y, MAINMENU_TITLE_X, "== OSHI REVIEW ==");
 
   for (int i = 0; i < nChoices; ++i) {
     if (highlight == i + 1) {
@@ -55,8 +55,8 @@ void mainMenu(void) {
   clear();
 
   WINDOW *menuWin;
-  int highlight = 1;
-  int menuChoice = 0;
+  int highlight = INIT_HIGHLIGHT;
+  int menuChoice = INIT_CHOICE;
 
   startX = (80 - WIDTH) / 2;
   startY = (24 - HEIGHT) / 2;

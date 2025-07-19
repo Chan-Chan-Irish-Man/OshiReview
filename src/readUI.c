@@ -34,16 +34,14 @@ static Review *sharedReviews = NULL;
 static int sharedReviewCount = 0;
 
 static void printReviewsUI(WINDOW *win, int highlight) {
-  mvwprintw(win, 0, 2,
-            "== REVIEWS (%d total, ↑↓ to scroll, ENTER to select) ==",
-            sharedReviewCount);
-
   int x = 2, y = 2;
 
   werase(win);
-  box(win, 0, 0);
-  mvwprintw(win, 0, 2, "== REVIEWS (Press Q to return) ==");
+  box(win, '|', '=');
 
+  mvwprintw(win, READBOX_TITLE_Y, READBOX_TITLE_X,
+            "== REVIEWS (%d total, arrows to scroll, ENTER to select) ==",
+            sharedReviewCount);
   for (int i = 0; i < sharedReviewCount; ++i) {
     if (i == highlight - 1)
       wattron(win, A_REVERSE);
@@ -73,8 +71,8 @@ void readReviews(void) {
   }
 
   WINDOW *reviewWin;
-  int highlight = 1;
-  int reviewChoice = 0;
+  int highlight = INIT_HIGHLIGHT;
+  int reviewChoice = INIT_CHOICE;
 
   int startX = (80 - WIDTH) / 2;
   int startY = (24 - HEIGHT) / 2;

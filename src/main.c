@@ -12,7 +12,7 @@ void initCurses(void) {
 }
 
 int main(void) {
-  setlocale(LC_ALL, "");
+  setlocale(LC_ALL, "en_US.UTF-8");
 
   initCurses();
   mainMenu();
