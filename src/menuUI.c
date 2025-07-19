@@ -3,47 +3,18 @@
 
 #include "menuUI.h"
 #include "readUI.h"
+#include "utils.h"
 #include "writeUI.h"
 
-int startX = 0;
-int startY = 0;
+static int startX = 0;
+static int startY = 0;
 
-char *choices[] = {
+static char *choices[] = {
     "[1] Write a Review",
     "[2] See Previous Reviews",
     "[3] Exit",
 };
-int nChoices = sizeof(choices) / sizeof(char *);
-
-int menuChoose(WINDOW *menuWin, int highlight, int choice, int c) {
-  while (1) {
-    c = wgetch(menuWin);
-    switch (c) {
-    case KEY_UP:
-      if (highlight == 1)
-        highlight = nChoices;
-      else
-        --highlight;
-      break;
-    case KEY_DOWN:
-      if (highlight == nChoices)
-        highlight = 1;
-      else
-        ++highlight;
-      break;
-    case 10:
-      choice = highlight;
-      return choice;
-      break;
-    default:
-      refresh();
-      break;
-    }
-    printMenu(menuWin, highlight);
-  }
-  clrtoeol();
-  refresh();
-}
+static int nChoices = sizeof(choices) / sizeof(char *);
 
 void menuChoices(int choice) {
   switch (choice) {
@@ -63,7 +34,7 @@ void menuChoices(int choice) {
   }
 }
 
-void printMenu(WINDOW *menuWin, int highlight) {
+void printMainMenuUI(WINDOW *menuWin, int highlight) {
   int x = 2, y = 2;
 
   mvwprintw(menuWin, 0, 2, "== OSHI REVIEW ==");
@@ -83,8 +54,7 @@ void printMenu(WINDOW *menuWin, int highlight) {
 void mainMenu(void) {
   WINDOW *menuWin;
   int highlight = 1;
-  int choice = 0;
-  int c = 0;
+  int menuChoice = 0;
 
   startX = (80 - WIDTH) / 2;
   startY = (24 - HEIGHT) / 2;
@@ -93,7 +63,9 @@ void mainMenu(void) {
   keypad(menuWin, TRUE);
   refresh();
 
-  printMenu(menuWin, highlight);
-  choice = menuChoose(menuWin, highlight, choice, c);
-  menuChoices(choice);
+  printMainMenuUI(menuWin, highlight);
+  menuChoice =
+      returnChoice(menuWin, highlight, menuChoice, nChoices, printMainMenuUI);
+
+  menuChoices(menuChoice);
 }
