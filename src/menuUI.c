@@ -1,0 +1,99 @@
+#include "curses.h"
+#include "stdlib.h"
+
+#include "menuUI.h"
+#include "readUI.h"
+#include "writeUI.h"
+
+int startX = 0;
+int startY = 0;
+
+char *choices[] = {
+    "[1] Write a Review",
+    "[2] See Previous Reviews",
+    "[3] Exit",
+};
+int nChoices = sizeof(choices) / sizeof(char *);
+
+int menuChoose(WINDOW *menuWin, int highlight, int choice, int c) {
+  while (1) {
+    c = wgetch(menuWin);
+    switch (c) {
+    case KEY_UP:
+      if (highlight == 1)
+        highlight = nChoices;
+      else
+        --highlight;
+      break;
+    case KEY_DOWN:
+      if (highlight == nChoices)
+        highlight = 1;
+      else
+        ++highlight;
+      break;
+    case 10:
+      choice = highlight;
+      return choice;
+      break;
+    default:
+      refresh();
+      break;
+    }
+    printMenu(menuWin, highlight);
+  }
+  clrtoeol();
+  refresh();
+}
+
+void menuChoices(int choice) {
+  switch (choice) {
+  case 1:
+    writeReview();
+    break;
+  case 2:
+    readReviews();
+    break;
+  case 3:
+    exit(0);
+    break; // so gcc won't complain
+  default:
+    printw("This simply isn't possible...\n");
+    getch();
+    break;
+  }
+}
+
+void printMenu(WINDOW *menuWin, int highlight) {
+  int x = 2, y = 2;
+
+  mvwprintw(menuWin, 0, 2, "== OSHI REVIEW ==");
+
+  for (int i = 0; i < nChoices; ++i) {
+    if (highlight == i + 1) {
+      wattron(menuWin, A_REVERSE);
+      mvwprintw(menuWin, y, x, "%s", choices[i]);
+      wattroff(menuWin, A_REVERSE);
+    } else
+      mvwprintw(menuWin, y, x, "%s", choices[i]);
+    ++y;
+  }
+  wrefresh(menuWin);
+}
+
+void mainMenu(void) {
+  WINDOW *menuWin;
+  int highlight = 1;
+  int choice = 0;
+  int c = 0;
+
+  startX = (80 - WIDTH) / 2;
+  startY = (24 - HEIGHT) / 2;
+
+  menuWin = newwin(HEIGHT, WIDTH, startY, startX);
+  keypad(menuWin, TRUE);
+  refresh();
+
+  printMenu(menuWin, highlight);
+  choice = menuChoose(menuWin, highlight, choice, c);
+  menuChoices(choice);
+}
