@@ -58,8 +58,8 @@ void mainMenu(void) {
   int highlight = INIT_HIGHLIGHT;
   int menuChoice = INIT_CHOICE;
 
-  startX = (80 - WIDTH) / 2;
-  startY = (24 - HEIGHT) / 2;
+  startX = (MAX_X - WIDTH) / 2;
+  startY = (MAX_Y - HEIGHT) / 2;
 
   menuWin = newwin(HEIGHT, WIDTH, startY, startX);
   keypad(menuWin, TRUE);

@@ -74,8 +74,8 @@ void readReviews(void) {
   int highlight = INIT_HIGHLIGHT;
   int reviewChoice = INIT_CHOICE;
 
-  int startX = (80 - WIDTH) / 2;
-  int startY = (24 - HEIGHT) / 2;
+  int startX = (MAX_X - WIDTH) / 2;
+  int startY = (MAX_Y - HEIGHT) / 2;
 
   reviewWin = newwin(HEIGHT, WIDTH, startY, startX);
   keypad(reviewWin, TRUE);
