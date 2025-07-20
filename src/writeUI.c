@@ -46,11 +46,11 @@ void printReviewMenuUI(WINDOW *menuWin, int highlight) {
 
 void reviewChoices(int reviewChoice, const char *oshiName, const char *review) {
   switch (reviewChoice) {
-  case 1:
+  case 0:
     addReviewToFile(oshiName, review);
     mainMenu();
     break;
-  case 2:
+  case 1:
     writeReview();
     break;
   default:

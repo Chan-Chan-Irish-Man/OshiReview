@@ -18,13 +18,13 @@ static int nChoices = sizeof(choices) / sizeof(char *);
 
 void menuChoices(int choice) {
   switch (choice) {
-  case 1:
+  case 0:
     writeReview();
     break;
-  case 2:
+  case 1:
     readReviews();
     break;
-  case 3:
+  case 2:
     exit(0);
     break;
   default:

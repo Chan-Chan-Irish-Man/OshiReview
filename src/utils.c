@@ -4,12 +4,10 @@
 
 int returnChoice(WINDOW *window, int highlight, int choice, int nChoices,
                  void (*printFn)(WINDOW *, int)) {
-  int c;
-
   printFn(window, highlight);
 
   while (1) {
-    c = wgetch(window);
+    int c = wgetch(window);
     switch (c) {
     case KEY_UP:
       if (highlight == 1)
@@ -24,7 +22,7 @@ int returnChoice(WINDOW *window, int highlight, int choice, int nChoices,
         ++highlight;
       break;
     case 10: // Enter key
-      choice = highlight;
+      choice = highlight - 1;
       return choice;
     default:
       break;

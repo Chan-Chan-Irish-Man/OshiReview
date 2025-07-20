@@ -16,12 +16,14 @@ int readReviewsFromFile(Review *reviews, int maxReviews) {
   while (fgets(line, sizeof(line), file) && count < maxReviews) {
     line[strcspn(line, "\n")] = 0;
 
-    char *oshiName = strtok(line, "|");
-    char *review = strtok(NULL, "|");
+    const char *oshiName = strtok(line, "|");
+    const char *review = strtok(NULL, "|");
 
     if (oshiName && review) {
       strncpy(reviews[count].oshiName, oshiName, MAX_NAME_LEN - 1);
+      reviews[count].oshiName[MAX_NAME_LEN - 1] = '\0';
       strncpy(reviews[count].review, review, MAX_REVIEW_LEN - 1);
+      reviews[count].review[MAX_REVIEW_LEN - 1] = '\0';
       count++;
     }
   }
@@ -40,7 +42,7 @@ static void printReviewsUI(WINDOW *win, int highlight) {
   box(win, '|', '=');
 
   mvwprintw(win, READBOX_TITLE_Y, READBOX_TITLE_X,
-            "== REVIEWS (%d total, arrows to scroll, ENTER to select) ==",
+            "REVIEWS (%d total, arrows to scroll, ENTER to select)",
             sharedReviewCount);
   for (int i = 0; i < sharedReviewCount; ++i) {
     if (i == highlight - 1)
@@ -56,6 +58,26 @@ static void printReviewsUI(WINDOW *win, int highlight) {
   }
 
   wrefresh(win);
+}
+
+void readSelectedReview(int reviewChoice, Review reviews[], int startY,
+                        int startX) {
+  WINDOW *selectedReviewWin;
+
+  selectedReviewWin = newwin(HEIGHT, WIDTH, startY, startX);
+  box(selectedReviewWin, '|', '=');
+
+  mvwprintw(selectedReviewWin, READBOX_TITLE_Y, READBOX_TITLE_X,
+            "== %s ==", reviews[reviewChoice].oshiName);
+
+  mvwprintw(selectedReviewWin, READBOX_BODY_Y, READBOX_BODY_X, "%s",
+            reviews[reviewChoice].review);
+
+  touchwin(selectedReviewWin);
+  wrefresh(selectedReviewWin);
+
+  getch();
+  delwin(selectedReviewWin);
 }
 
 void readReviews(void) {
@@ -74,8 +96,8 @@ void readReviews(void) {
   int highlight = INIT_HIGHLIGHT;
   int reviewChoice = INIT_CHOICE;
 
-  int startX = (MAX_X - WIDTH) / 2;
   int startY = (MAX_Y - HEIGHT) / 2;
+  int startX = (MAX_X - WIDTH) / 2;
 
   reviewWin = newwin(HEIGHT, WIDTH, startY, startX);
   keypad(reviewWin, TRUE);
@@ -87,5 +109,8 @@ void readReviews(void) {
   werase(reviewWin);
   wrefresh(reviewWin);
   delwin(reviewWin);
+
+  readSelectedReview(reviewChoice, reviews, startY, startX);
+
   clear();
 }
